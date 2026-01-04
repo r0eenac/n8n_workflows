@@ -5,6 +5,9 @@ This project contains an n8n workflow that automates the handling of encrypted P
 
 > **Important:** This service requires a python microserver running on docker, and does not use any external APIs to avoid sending any sensitive info outside.
 
+
+<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/937ca3bd-5a1e-477b-b59d-03be899b6d08" />
+
 ## 🚀 Features
 * **📂 Batch Processing:** Automatically iterates over files in a specific Google Drive folder.
 * **🔐 Decryption:** Removes password protection using an external Python microservice.
