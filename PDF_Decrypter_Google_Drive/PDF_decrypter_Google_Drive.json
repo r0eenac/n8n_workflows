@@ -1,0 +1,686 @@
+{
+  "name": "PDF - decrypt pdf files",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        -240
+      ],
+      "id": "7e1908a7-bce0-4ed8-a2a7-99cc04042b16",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -32,
+        -240
+      ],
+      "id": "0a77eb20-1ea7-4671-971a-f36d381d53ba",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "credential",
+          "name": "Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $node[\"Loop Over Items\"].json.name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "=\"https://drive.google.com/drive/u/0/folders/{{ $json.target_folder_id }}\"",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        176,
+        160
+      ],
+      "id": "8f407872-05ff-4435-a8b2-f1d510ee79f2",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "credential",
+          "name": "Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -208,
+        -240
+      ],
+      "id": "80bb7553-3cc5-4e4a-a9f6-e8df1f88e535",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b6adaf5c-112f-44c9-a09d-8874e4309ff1",
+              "name": "year",
+              "value": "={{ $node[\"Loop Over Items\"].json.name.match(/202[0-9]/)[0] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -896,
+        288
+      ],
+      "id": "4d09a677-0683-41d6-8f24-56e9a16e7e64",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8839c7a0-8b6d-45f9-b10c-047ffd321e52",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -528,
+        160
+      ],
+      "id": "2728c557-22a0-452a-bebe-4e280b1dcc7a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $node[\"Loop Over Items\"].json.name.match(/202[0-9]/)[0] }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "value of the parent folder",
+          "mode": "list",
+          "cachedResultName": "no_password",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/value of the parent folder"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -224,
+        640
+      ],
+      "id": "f893d3f6-6fbb-4dd5-80b9-4c88e11717b9",
+      "name": "Create folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "credential",
+          "name": "Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Search files in google drive \n** first node search a specific folder\nsecond node search for files in the folder - needs a limit",
+        "height": 400,
+        "width": 656,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -944,
+        -384
+      ],
+      "typeVersion": 1,
+      "id": "82997d02-f696-4ee2-9d59-b611909f5df9",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# Download the files and decrypt  - LOOP\n",
+        "height": 400,
+        "width": 640,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -240,
+        -384
+      ],
+      "typeVersion": 1,
+      "id": "ce4c40cf-c33d-4fcb-b7f5-e9cd7bdcbe5e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "Name_of_the_Folder",
+        "filter": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -608,
+        -240
+      ],
+      "id": "69284552-43d2-4d04-b77d-ca5702ac46dc",
+      "name": "Search in folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "credential",
+          "name": "Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "queryString": "='{{ $json.id }}' in parents and mimeType != 'application/vnd.google-apps.folder'",
+        "limit": 100,
+        "filter": {
+          "whatToSearch": "files"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -432,
+        -240
+      ],
+      "id": "bd789aae-7ce7-4ff5-8188-6f516aef02d0",
+      "name": "Search files",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "credential",
+          "name": "Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://name of the server:port/decrypt",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "password",
+              "value": "password"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        128,
+        -240
+      ],
+      "id": "7486eaca-223c-4f92-af9e-07e04acae605",
+      "name": "decrypt the files"
+    },
+    {
+      "parameters": {
+        "content": "# search if folder exist or not\n** first node search a specific folder\nsecond node search for files in the folder - needs a limit",
+        "height": 400,
+        "width": 656,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -944,
+        64
+      ],
+      "typeVersion": 1,
+      "id": "3557cba0-3ea8-4d15-8ee9-019d25b2fa16",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "category": "doNothing"
+      },
+      "type": "n8n-nodes-base.debugHelper",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        320
+      ],
+      "id": "fc36e7fb-03c4-4ab6-bca8-6aa3159dcefe",
+      "name": "DebugHelper"
+    },
+    {
+      "parameters": {
+        "content": "# Folder exist ",
+        "height": 400,
+        "width": 640,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        64
+      ],
+      "typeVersion": 1,
+      "id": "c45205ca-bb2a-4d93-a340-a10b22858038",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "queryString": "=name = '{{ $json.year }}' and 'value of the parent folder' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false",
+        "filter": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -736,
+        288
+      ],
+      "id": "3632c362-23e9-42c9-914c-abdca7e8cf05",
+      "name": "Search folder exist?",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "credential",
+          "name": "Google Drive"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "# Folder do not exist  - create new\n",
+        "height": 400,
+        "width": 640,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -240,
+        496
+      ],
+      "typeVersion": 1,
+      "id": "25fc926b-a9f0-4d1a-adfd-44c8d30a812f",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "name": "={{ $node[\"Loop Over Items\"].json.name }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "=\"https://drive.google.com/drive/u/0/folders/{{ $json.target_folder_id }}\"",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        272,
+        640
+      ],
+      "id": "dbdc8001-5f71-46c4-b02c-da52bbb5e783",
+      "name": "Upload file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "credential",
+          "name": "Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -16,
+        160
+      ],
+      "id": "28c9ecab-c0b4-4c33-bcc7-91b9b73c04f1",
+      "name": "Merge exist"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        112,
+        640
+      ],
+      "id": "d710eeaa-c9c2-4f81-bf09-54260b85c72a",
+      "name": "Merge not exist"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6706ef2d-b4ec-4299-94b0-016726f3ea00",
+              "name": "target_folder_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        144
+      ],
+      "id": "03fbd4b5-a2bd-4e7b-9cea-8c4d06bd4b82",
+      "name": "set target folder"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6706ef2d-b4ec-4299-94b0-016726f3ea00",
+              "name": "target_folder_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        640
+      ],
+      "id": "ccac8a17-8e20-44a2-a508-d53e8ae71b11",
+      "name": "set target folder not exist"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search in folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "decrypt the files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Search folder exist?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "set target folder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create folder": {
+      "main": [
+        [
+          {
+            "node": "set target folder not exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search in folder": {
+      "main": [
+        [
+          {
+            "node": "Search files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "decrypt the files": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge exist",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Merge not exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search folder exist?": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DebugHelper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge exist": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge not exist": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set target folder": {
+      "main": [
+        [
+          {
+            "node": "Merge exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set target folder not exist": {
+      "main": [
+        [
+          {
+            "node": "Merge not exist",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
