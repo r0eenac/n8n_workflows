@@ -31,6 +31,19 @@ To run this workflow, you need:
 
 ---
 
+## 🐳 Docker Network Setup (Crucial)
+For seamless communication, it is highly recommended to run both **n8n** and **Linkwarden** as Docker containers on the same machine and connect them to a **shared Docker Network**.
+
+1.  **Create a Network:** Run `docker network create automation-net`.
+2.  **Connect Containers:** Add the network to the `docker-compose.yml` file of both services:
+    ```yaml
+    networks:
+      default:
+        external:
+          name: automation-net
+    ```
+3.  **API Connection:** By doing this, you can replace the IP address in the n8n HTTP Request nodes with the container name (e.g., `http://linkwarden:3000`), ensuring the connection remains stable even if the host IP changes.
+
 ## ⚙️ Configuration
 
 After importing the JSON file into n8n, you must update the placeholder values to match your environment:
