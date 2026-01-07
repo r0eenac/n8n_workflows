@@ -1,0 +1,172 @@
+{
+  "name": "🛢️DB jobs ",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT w.name AS workflow_name, COUNT(*) AS error_count\nFROM public.execution_entity e\nJOIN public.workflow_entity w ON e.\"workflowId\" = w.id\nWHERE e.status = 'error'\n  AND e.\"startedAt\"::date = CURRENT_DATE - INTERVAL '1 day'\nGROUP BY e.\"workflowId\", w.name\nORDER BY error_count DESC\nLIMIT 5;\n",
+        "additionalFields": {}
+      },
+      "id": "0a75ead0-8330-42e2-880c-a3d7a3bd6a84",
+      "name": "בדיקת כשלונות",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        -256
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "POSTGRES_CRED_ID",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "56ac461f-2499-4342-a609-278d42123a91",
+              "leftValue": "={{ $items.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        192,
+        -256
+      ],
+      "id": "46b7c8cf-adaf-47a9-9f54-e01813faf6d6",
+      "name": "האם היו כשלונות"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = items;\nlet message = \"🔥 N8N - דו\\\"ח שגיאות אתמול:\\n\\n\";\n\nfor (const row of rows) {\n  message += ` ${row.json.workflow_name} – ${row.json.error_count} \\n`;\n}\n\nreturn [{ json: { message } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        -288
+      ],
+      "id": "ac35a5ee-3ba8-4cf8-bc87-1a8d686f74ea",
+      "name": "עיצוב להודעה"
+    },
+    {
+      "parameters": {
+        "chatId": "123456789@g.us",
+        "message": "={{ $json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-whatsapp-green-api.greenApi",
+      "typeVersion": 1,
+      "position": [
+        560,
+        -288
+      ],
+      "id": "5c9064bf-568b-40b2-9d5f-d5eed7a3b2c8",
+      "name": "שליחת הודעה",
+      "credentials": {
+        "greenApi": {
+          "id": "GREENAPI_CRED_ID",
+          "name": "Green account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 0,
+              "minute": 5
+            }
+          ]
+        }
+      },
+      "id": "84a7c13c-03e5-4181-9f20-2ac1fb2bac05",
+      "name": "1205_run",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -256
+      ]
+    },
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 1
+            }
+          ]
+        }
+      },
+      "id": "6db97ab7-babd-40b4-ba27-372c3e6c571a",
+      "name": "0100_run",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM public.execution_entity\nWHERE id NOT IN (\n  SELECT id FROM public.execution_entity\n  ORDER BY id DESC\n  LIMIT 1000\n);\n",
+        "additionalFields": {}
+      },
+      "id": "a9cc8960-b3cb-4f69-8fa2-d9d5bf057ef2",
+      "name": "מחיקת רשומות היסטוריות",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -48
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "POSTGRES_CRED_ID",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = items;\nlet message = \"🔥 N8N - דו\\\"ח כמות ריצות השבוע :\\n\\n\";\n\nfor (const row of rows) {\n  message += ` ${row.json.name} – ${row.json.runs_this_week} \\n`;\n}\n\nreturn [{ json: { message } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        144
+      ],
+      "id": "ddb47efa-1a7b-47fd-8c8d-c75d770826e5",
+      "name": "עיצוב להודעה1"
+    },
+    {
+      "parameters": {
+        "chatId": "123456789@g.us",
+        "message": "={{ $json.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-whatsapp-green-api.greenApi",
+      "typeVersion":
