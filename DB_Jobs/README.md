@@ -118,3 +118,6 @@ WHERE id NOT IN (
 Direct DB Access: This workflow modifies the database directly (DELETE operation). Ensure you have backups before running the cleanup node for the first time.
 
 Timezones: The SQL queries rely on the database server's timezone. Ensure your Postgres server time matches your local time for accurate reporting.
+
+<img width="1231" height="618" alt="image" src="https://github.com/user-attachments/assets/91e5c04f-fc27-43ed-b983-a2e7c7fc167d" />
+
